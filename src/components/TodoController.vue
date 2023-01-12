@@ -7,8 +7,15 @@ interface Props {
   remaining: number;
   visibility: string;
 }
+interface Emits {
+  (event: "removeCompleted"): void;
+}
 const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 const pluralize = computed(() => (props.remaining === 1 ? "item" : "items"));
+const removeCompleted = () => {
+  emit("removeCompleted");
+};
 </script>
 
 <template>
@@ -31,5 +38,12 @@ const pluralize = computed(() => (props.remaining === 1 ? "item" : "items"));
         >
       </li>
     </ul>
+    <button
+      class="clear-completed"
+      v-show="todos.length > remaining"
+      @click="removeCompleted"
+    >
+      Clear completed
+    </button>
   </footer>
 </template>

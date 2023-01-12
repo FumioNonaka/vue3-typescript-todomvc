@@ -13,6 +13,7 @@ export interface Todo {
 const todos = ref(fetch());
 const visibility = ref("all");
 const remaining = computed(() => getActive(todos.value).length);
+const allDone = computed(() => remaining.value === 0);
 const filteredTodos = computed((): Todo[] => {
   switch (visibility.value) {
     case "all":
@@ -23,7 +24,7 @@ const filteredTodos = computed((): Todo[] => {
       return todos.value.filter((todo) => todo.completed);
     default:
       return todos.value;
-	}
+  }
 });
 watchEffect(() => save(todos.value));
 const addTodo = (todoTitle: string) => {
@@ -46,6 +47,12 @@ const getActive = (todos: Todo[]) => {
 const onHashChange = () => {
   visibility.value = window.location.hash.replace(/#\/?/, "");
 };
+const removeCompleted = () => {
+  todos.value = getActive(todos.value);
+};
+const toggleAll = (checked: boolean) => {
+  todos.value.forEach((todo) => (todo.completed = checked));
+};
 onMounted(() => {
   window.addEventListener("hashchange", onHashChange);
 });
@@ -58,15 +65,18 @@ onMounted(() => {
       <TodoInput @addTodo="addTodo" />
     </header>
     <TodoList
-      :filtered-todos="filteredTodos"
+      :allDone="allDone"
+      :filteredTodos="filteredTodos"
       :todos="todos"
       @removeTodo="removeTodo"
       @done="done"
+      @toggleAll="toggleAll"
     />
     <TodoController
       :todos="todos"
       :remaining="remaining"
       :visibility="visibility"
+      @removeCompleted="removeCompleted"
     />
   </section>
 </template>
