@@ -18,6 +18,12 @@ const addTodo = (todoTitle: string) => {
     completed: false,
   });
 };
+const removeTodo = (todo: Todo) => {
+  todos.value = todos.value.filter((item) => item !== todo);
+};
+const done = (todo: Todo, completed: boolean) => {
+  todo.completed = completed;
+};
 </script>
 
 <template>
@@ -26,11 +32,9 @@ const addTodo = (todoTitle: string) => {
       <h1>todos</h1>
       <TodoInput @addTodo="addTodo" />
     </header>
-    <TodoList :todos="todos" />
+    <TodoList :todos="todos" @removeTodo="removeTodo" @done="done" />
   </section>
 </template>
-
-<style scoped></style>
 
 <style>
 @import url("https://unpkg.com/todomvc-app-css@2.4.2/index.css");
