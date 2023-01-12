@@ -7,6 +7,7 @@ interface Props {
 interface Emits {
   (event: "removeTodo", todo: Todo): void;
   (event: "done", todo: Todo, completed: boolean): void;
+  (event: "editTodo", todo: Todo): void;
 }
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
@@ -15,6 +16,9 @@ const removeTodo = () => {
 };
 const onChange = () => {
   emit("done", props.todo, !props.todo.completed);
+};
+const editTodo = () => {
+  emit("editTodo", props.todo);
 };
 </script>
 
@@ -26,7 +30,7 @@ const onChange = () => {
       :checked="todo.completed"
       @change="onChange"
     />
-    <label>{{ todo.title }}</label>
+    <label @dblclick="editTodo">{{ todo.title }}</label>
     <button class="destroy" @click="removeTodo" />
   </div>
 </template>
