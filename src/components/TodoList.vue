@@ -69,7 +69,12 @@ const onChange = ({ target }: Event) => {
           @done="done"
           @editTodo="editTodo"
         />
-        <TodoEdit :todo="todo" @cancelEdit="cancelEdit" @doneEdit="doneEdit" />
+        <TodoEdit
+          :editedTodo="editedTodo"
+          :todo="todo"
+          @cancelEdit="cancelEdit"
+          @doneEdit="doneEdit"
+        />
       </li>
     </ul>
   </section>
