@@ -1,19 +1,22 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
+import { fetch, getNewId, save } from "./TodoStorage";
 import TodoInput from "./components/TodoInput.vue";
 import TodoList from "./components/TodoList.vue";
+import TodoController from "./components/TodoController.vue";
 
 export interface Todo {
   id: number;
   title: string;
   completed: boolean;
 }
-const todos = ref<Todo[]>([]);
-const uid = ref(0);
+const todos = ref(fetch());
+const remaining = computed(() => getActive(todos.value).length);
+watchEffect(() => save(todos.value));
 const addTodo = (todoTitle: string) => {
   if (!todoTitle) return;
   todos.value.push({
-    id: uid.value++,
+    id: getNewId(),
     title: todoTitle,
     completed: false,
   });
@@ -24,6 +27,9 @@ const removeTodo = (todo: Todo) => {
 const done = (todo: Todo, completed: boolean) => {
   todo.completed = completed;
 };
+const getActive = (todos: Todo[]) => {
+  return todos.filter((todo) => !todo.completed);
+};
 </script>
 
 <template>
@@ -33,6 +39,7 @@ const done = (todo: Todo, completed: boolean) => {
       <TodoInput @addTodo="addTodo" />
     </header>
     <TodoList :todos="todos" @removeTodo="removeTodo" @done="done" />
+    <TodoController :todos="todos" :remaining="remaining" />
   </section>
 </template>
 
