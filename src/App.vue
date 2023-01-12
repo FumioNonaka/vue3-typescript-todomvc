@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { fetch, getNewId, save } from "./TodoStorage";
 import TodoInput from "./components/TodoInput.vue";
 import TodoList from "./components/TodoList.vue";
@@ -11,7 +11,20 @@ export interface Todo {
   completed: boolean;
 }
 const todos = ref(fetch());
+const visibility = ref("all");
 const remaining = computed(() => getActive(todos.value).length);
+const filteredTodos = computed((): Todo[] => {
+  switch (visibility.value) {
+    case "all":
+      return todos.value;
+    case "active":
+      return todos.value.filter((todo) => !todo.completed);
+    case "completed":
+      return todos.value.filter((todo) => todo.completed);
+    default:
+      return todos.value;
+	}
+});
 watchEffect(() => save(todos.value));
 const addTodo = (todoTitle: string) => {
   if (!todoTitle) return;
@@ -30,6 +43,12 @@ const done = (todo: Todo, completed: boolean) => {
 const getActive = (todos: Todo[]) => {
   return todos.filter((todo) => !todo.completed);
 };
+const onHashChange = () => {
+  visibility.value = window.location.hash.replace(/#\/?/, "");
+};
+onMounted(() => {
+  window.addEventListener("hashchange", onHashChange);
+});
 </script>
 
 <template>
@@ -38,8 +57,17 @@ const getActive = (todos: Todo[]) => {
       <h1>todos</h1>
       <TodoInput @addTodo="addTodo" />
     </header>
-    <TodoList :todos="todos" @removeTodo="removeTodo" @done="done" />
-    <TodoController :todos="todos" :remaining="remaining" />
+    <TodoList
+      :filtered-todos="filteredTodos"
+      :todos="todos"
+      @removeTodo="removeTodo"
+      @done="done"
+    />
+    <TodoController
+      :todos="todos"
+      :remaining="remaining"
+      :visibility="visibility"
+    />
   </section>
 </template>
 
