@@ -3,7 +3,7 @@ import type { Todo } from "../App.vue";
 import TodoItem from "./TodoItem.vue";
 
 interface Props {
-  todos: Todo[];
+  filteredTodos: Todo[];
 }
 interface Emits {
   (event: "removeTodo", todo: Todo): void;
@@ -23,7 +23,7 @@ const done = (todo: Todo, completed: boolean) => {
   <section class="main">
     <ul class="todo-list">
       <li
-        v-for="todo in todos"
+        v-for="todo in filteredTodos"
         :class="['todo', { completed: todo.completed }]"
         :key="todo.id"
       >
