@@ -61,7 +61,9 @@ onMounted(() => {
 <template>
   <section id="app" class="todoapp">
     <header class="header">
-      <h1>todos</h1>
+      <Transition appear name="todo-head">
+        <h1>todos</h1>
+      </Transition>
       <TodoInput @addTodo="addTodo" />
     </header>
     <TodoList
@@ -80,6 +82,16 @@ onMounted(() => {
     />
   </section>
 </template>
+
+<style scoped>
+.todo-head-enter-active {
+  transition: 1s ease-in;
+}
+.todo-head-enter-from {
+  opacity: 0;
+  transform: translateY(-40px);
+}
+</style>
 
 <style>
 @import url("https://unpkg.com/todomvc-app-css@2.4.2/index.css");

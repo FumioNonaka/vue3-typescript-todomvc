@@ -54,11 +54,11 @@ const onChange = ({ target }: Event) => {
       @change="onChange"
     />
     <label for="toggle-all">Mark all as complete</label>
-    <ul class="todo-list">
+    <TransitionGroup class="todo-list" name="todo-item" tag="ul">
       <li
         v-for="todo in filteredTodos"
         :class="[
-          'todo',
+          'todo-item',
           { completed: todo.completed, editing: todo == editedTodo },
         ]"
         :key="todo.id"
@@ -76,6 +76,20 @@ const onChange = ({ target }: Event) => {
           @doneEdit="doneEdit"
         />
       </li>
-    </ul>
+    </TransitionGroup>
   </section>
 </template>
+
+<style scoped>
+.todo-item {
+  transition: 1s;
+}
+.todo-item-enter-from,
+.todo-item-leave-to {
+  opacity: 0;
+  transform: translateX(200px);
+}
+.todo-item-leave-active {
+  position: absolute;
+}
+</style>
